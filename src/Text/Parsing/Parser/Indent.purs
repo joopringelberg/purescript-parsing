@@ -203,17 +203,17 @@ indentOp a (Opt b c) = ap a (option b (sameOrIndented *> c))
 infixl 12 indentOp as <?/>
 
 -- | Parses with surrounding brackets
-indentBrackets :: forall m a. Monad m => IndentParser m String a -> IndentParser m String a
-indentBrackets p = withPos $ pure id <-/> symbol "[" <+/> p <-/> symbol "]"
+indentBrackets :: forall a. IndentParser String a -> IndentParser String a
+indentBrackets p = withPos $ pure identity <-/> symbol "[" <+/> p <-/> symbol "]"
 
 -- | Parses with surrounding angle brackets
-indentAngles :: forall m a. Monad m => IndentParser m String a -> IndentParser m String a
-indentAngles p = withPos $ pure id <-/> symbol "<" <+/> p <-/> symbol ">"
+indentAngles :: forall a. IndentParser String a -> IndentParser String a
+indentAngles p = withPos $ pure identity <-/> symbol "<" <+/> p <-/> symbol ">"
 
 -- | Parses with surrounding braces
-indentBraces :: forall m a. Monad m => IndentParser m String a -> IndentParser m String a
-indentBraces p = withPos $ pure id <-/> symbol "{" <+/> p <-/> symbol "}"
+indentBraces :: forall a. IndentParser String a -> IndentParser String a
+indentBraces p = withPos $ pure identity <-/> symbol "{" <+/> p <-/> symbol "}"
 
 -- | Parses with surrounding parentheses
-indentParens :: forall m a. Monad m => IndentParser m String a -> IndentParser m String a
-indentParens p = withPos $ pure id <-/> symbol "(" <+/> p <-/> symbol ")"
+indentParens :: forall a. IndentParser String a -> IndentParser String a
+indentParens p = withPos $ pure identity <-/> symbol "(" <+/> p <-/> symbol ")"

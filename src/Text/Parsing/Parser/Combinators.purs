@@ -12,7 +12,7 @@
 -- | ```
 -- |
 -- | Because Strings are not Char Arrays in PureScript `many` and `some` on Char Parsers need to
--- | be used in conjunction with `Data.String.fromCharArray` to achieve "Parsec-like" results.
+-- | be used in conjunction with `Data.String.CodeUnits.fromCharArray` to achieve "Parsec-like" results.
 -- |
 -- | ```purescript
 -- | Text.Parsec.many  (char 'x') <=> fromCharArray <$> Data.Array.many (char 'x')
@@ -36,13 +36,13 @@ import Text.Parsing.Parser (ParseState(..), ParserT(..), ParseError(..), fail)
 withErrorMessage :: forall m s a. Monad m => ParserT s m a -> String -> ParserT s m a
 withErrorMessage p msg = p <|> fail ("Expected " <> msg)
 
-infix 3 withErrorMessage as <?>
+infixl 3 withErrorMessage as <?>
 
 -- | Flipped `(<?>)`.
 asErrorMessage :: forall m s a. Monad m => String -> ParserT s m a -> ParserT s m a
 asErrorMessage = flip (<?>)
 
-infix 3 asErrorMessage as <??>
+infixl 3 asErrorMessage as <??>
 
 -- | Wrap a parser with opening and closing markers.
 -- |
