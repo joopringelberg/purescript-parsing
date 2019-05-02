@@ -54,7 +54,7 @@ module Text.Parsing.Indent
 import Prelude
 import Control.Alt ((<|>))
 import Control.Apply (lift2)
-import Control.Monad.State (State, StateT, evalState, evalStateT, gets)
+import Control.Monad.State (StateT, evalStateT, gets)
 import Control.Monad.State.Trans (get, put)
 import Control.Monad.Trans.Class (lift)
 import Data.List (List(..), many)
@@ -203,17 +203,17 @@ indentOp a (Opt b c) = ap a (option b (sameOrIndented *> c))
 infixl 12 indentOp as <?/>
 
 -- | Parses with surrounding brackets
-indentBrackets :: forall a. IndentParser String a -> IndentParser String a
+indentBrackets :: forall a m. Monad m => IndentParser m String a -> IndentParser m String a
 indentBrackets p = withPos $ pure identity <-/> symbol "[" <+/> p <-/> symbol "]"
 
 -- | Parses with surrounding angle brackets
-indentAngles :: forall a. IndentParser String a -> IndentParser String a
+indentAngles :: forall a m. Monad m => IndentParser m String a -> IndentParser m String a
 indentAngles p = withPos $ pure identity <-/> symbol "<" <+/> p <-/> symbol ">"
 
 -- | Parses with surrounding braces
-indentBraces :: forall a. IndentParser String a -> IndentParser String a
+indentBraces :: forall a m. Monad m => IndentParser m String a -> IndentParser m String a
 indentBraces p = withPos $ pure identity <-/> symbol "{" <+/> p <-/> symbol "}"
 
 -- | Parses with surrounding parentheses
-indentParens :: forall a. IndentParser String a -> IndentParser String a
+indentParens :: forall a m. Monad m => IndentParser m String a -> IndentParser m String a
 indentParens p = withPos $ pure identity <-/> symbol "(" <+/> p <-/> symbol ")"
