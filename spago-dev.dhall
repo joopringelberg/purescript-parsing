@@ -11,12 +11,16 @@ in conf //
 { sources = [ "src/**/*.purs", "test/**/*.purs", "bench/**/*.purs" ]
 , dependencies = conf.dependencies #
   [ "assert"
+  , "bifunctors"
   , "console"
+  , "enums"
   , "effect"
-  , "psci-support"
   , "minibench"
+  , "node-process"
+  , "nonempty"
   , "exceptions"
   , "string-parsers"
+  , "partial"
   ]
 , packages = ./packages.dhall
 }

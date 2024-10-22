@@ -2,7 +2,11 @@
 !.gitignore
 !.github
 !.editorconfig
+!.tidyrc.json
+!.tidyoperators
 
 output
 generated-docs
 bower_components
+output-es
+

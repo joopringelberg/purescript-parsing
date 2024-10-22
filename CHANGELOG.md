@@ -4,36 +4,244 @@ Notable changes to this project are documented in this file. The format is based
 
 ## [Unreleased]
 
-Breaking changes:
+Bugfixes:
+- `float` parser of `GenTokenParser` does not parse negative numbers (by @mstream)
 
-- `anyChar` will no longer always succeed. It will only succeed on a Basic
-  Multilingual Plane character. The new parser `anyCodePoint` will always
-  succeed. (#119 by @jamesdbrock)
-- Delete the `StringLike` typeclass. Users must delete all `StringLike`
-  constraints. (#119 by @jamesdbrock)
-- Move `updatePosString` to the `String` module and don’t
-  export it. (#119 by @jamesdbrock)
-- Change the definition of `whiteSpace` and `skipSpaces` to
-  `Data.CodePoint.Unicode.isSpace`. (#119 by @jamesdbrock)
+Breaking changes:
 
 New features:
 
-- Add primitive parsers `anyCodePoint` and `satisfyCodePoint` for parsing
-  `CodePoint`s. (#119 by @jamesdbrock)
-- Add `match` combinator (#119 by @jamesdbrock)
-- Add benchmark suite (#119 by @jamesdbrock)
-- Split the dev dependencies out into `spago-dev.dhall`.
+Other improvements:
+
+## [v10.2.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v10.2.0) - 2022-11-30
+
+New features:
+
+- Add `Parsing.String.Basic.takeWhile`, `takeWhile1` (#218 by @jamesdbrock)
+
+## [v10.1.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v10.1.0) - 2022-11-10
+
+New features:
+
+- add `MonadAsk` and `MonadReader` instances (#208 by @bentongxyz)
+- Add `Parsing.String.parseErrorHuman` (#209 by @jamesdbrock)
+- Add `liftMaybe`, `liftEither`, `liftExceptT` (#212 by @jamesdbrock)
+
+Other improvements:
+
+- Better error messages for `manyIndex` (#211 by @jamesdbrock)
+- Docs for `region` (#213 by @jamesdbrock)
+- README Recursion (#214 by @jamesdbrock)
+
+## [v10.0.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v10.0.0) - 2022-07-18
 
 Bugfixes:
 
-- Unicode correctness (#119 by @jamesdbrock)
+- consumeWith doesn't consume if position does not advance (#201 by @jamesdbrock)
+
+  This will effect parsers:
+
+  * rest
+  * string
+  * takeN
+  * regex
+  * whiteSpace
+  * skipSpaces
+
+- `number` should parse scientific notation when exponent does not contain a decimal (#204 by @MaybeJustJames)
+
+
+## [v9.1.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v9.1.0) - 2022-06-12
+
+Breaking changes:
+
+New features:
+
+- Add `Array` combinators in a new `Combinators.Array` module (#199 by @jamesdbrock)
+
+Bugfixes:
+
+- Bugfix in `intDecimal`.
 
 Other improvements:
+
+## [v9.0.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v9.0.0) - 2022-04-27
+
+Breaking changes:
+- Update project and deps to PureScript v0.15.0 (#160 by @JordanMartinez)
+- Drop deprecated `MonadZero` instance (#160 by @JordanMartinez)
+- New optimized internals. `ParserT` now has a more efficient representation,
+  resulting in (up to) 20x performance improvement. In addition to the performance,
+  all parser execution is always stack-safe, even monadically, obviating the need
+  to run parsers with `Trampoline` as the base Monad or to explicitly use `MonadRec`.
+
+  Code that was parametric over the underlying Monad no longer needs to propagate a
+  Monad constraint.
+
+  Code that constructs parsers via the underlying representation will need to be updated,
+  but otherwise the interface is unchanged and parsers should just enjoy the speed boost.
+
+  (#154 by @natefaubion)
+- Make `<??>` right-associative (#164 by @JordanMartinez)
+- Drop `<?>` and `<~?>` prec from 3 to 4 (#163, #164 by @JordanMartinez)
+
+  `<|>` was made right associative. Decreasing these two operators
+  prevents a compiler error (i.e. `MixedAssociativityError`)
+  without causing issues with `<$>`.
+- Rename module prefix from `Text.Parsing.Parser` to `Parsing` (#169 by @jamesdbrock)
+- Replace the `regex` parser. (#170 by @jamesdbrock)
+- Reorganize Combinators for #154 (#182 by @jamesdbrock)
+- Add the `index` field to `Position`. (#171 by @jamesdbrock)
+- Move the parsers
+  * `whiteSpace`
+  * `skipSpaces`
+  * `oneOf`
+  * `oneOfCodePoints`
+  * `noneOf`
+  * `noneOfCodePoints`
+  from `Parsing.String` to `Parsing.String.Basic`. (#183 by @jamesdbrock)
+- Change MonadState instance (#187 by jamesdbrock)
+
+  Users who stack a `ParserT` on a `StateT` base monad will call the `MonadState` members directly like `get` instead of needing to do `lift <<< get`.
+
+  To get the `ParserT` internal state, call `getParserT` instead of `get`.
+
+New features:
+
+- Add the `anyTill` primitive `String` combinator. (#186 by @jamesdbrock)
+- Add the `Parsing.String.Replace` module, copied from
+  https://github.com/jamesdbrock/purescript-parsing-replace (#188 by @jamesdbrock)
+  `streamEditT` can be written in terms of `replaceT`.
+
+  `streamEditT input sep editor = replaceT input (sep >>= editor >>> lift)`
+
+  (#188 by @jamesdbrock, #194 by @jamesdbrock)
+- Add the `advance` and `manyIndex` combinators. (#193 by @jamesdbrock)
+
+Bugfixes:
+
+- Improve correctness and speed of `number` and `intDecimal`. (#189 by @jamesdbrock)
+
+Other improvements:
+
+- Drop `math` dependency; update imports (#167 by @JordanMartinez)
+
+## [v8.4.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v8.4.0) - 2022-03-15
+
+New features:
+
+Add `regex` parser. (#153 by @jamesdbrock)
+
+## [v8.3.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v8.3.0) - 2022-03-13
+
+New features:
+
+Add `lower` parser to Text.Parsing.Parser.String.Basic. (#152 by @mkohlhass)
+
+Bugfixes:
+
+Add `unfoldable` to `spago.dhall`. (#152 by @mkohlhass)
+
+## [v8.2.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v8.2.0) - 2022-01-26
+
+Breaking changes:
+
+New features:
+
+- `Parser.String.rest` (#140 by @jamesdbrock)
+- `Parser.String.takeN` (#140 by @jamesdbrock)
+- `Parser.Token.eof` (#140 by @jamesdbrock)
+- `Parser.Combinators.manyTill_` (#143 by @jamesbrock)
+- `Parser.Combinators.many1Till_` (#143 by @jamesbrock)
+- `Parser.Combinators.manyTillRec_` (#143 by @jamesbrock)
+- `Parser.Combinators.many1TillRec_` (#143 by @jamesbrock)
+- `Parser.String.Basic.number` (#142 by @jamesbrock)
+- `Parser.String.Basic.intDecimal` (#142 by @jamesbrock)
+
+Bugfixes:
+
+- `Parser.String.eof` Set consumed on success so that this parser combines
+  correctly with `notFollowedBy eof`. Added a test for this. (#140 by @jamesdbrock)
+
+Other improvements:
+
+- Moved the `Parser.Token` parsers `digit`, `hexDigit`, `octDigit`, `upper`,
+  `space`, `letter`, `alphaNum` into the new module `Parser.String.Basic`. (#142 by @jamesdbrock)
+- Documentation. (#140 by @jamesdbrock)
+- Documentation. (#143 by @jamesdbrock)
+- Documentation. (#142 by @jamesdbrock)
+
+## [v8.1.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v8.1.0) - 2022-01-10
+
+Other improvements: README Quick start monadic parsing tutorial
+
+## [v8.0.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v8.0.0) - 2022-01-10
+
+Breaking changes:
+
+- De-exported the private helper functions `chainl1'` and `chainr1'`.
+  (#131 by @fsoikin)
+
+New features:
+
+- Added more stack-safe (at the expense of `MonadRec` constraint) combinators
+  `many1Rec`, `sepByRec`, `sepBy1Rec`, `endByRec`, `endBy1Rec`, `chainrRec`,
+  `chainr1Rec`, `chainlRec`, `chainl1Rec`, `skipManyRec`, and `skipMany1Rec`.
+  (#131 by @fsoikin)
+
+## [v7.2.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v7.2.0) - 2022-01-07
+
+New features:
+
+- Added stack-safe (at the expense of `MonadRec` constraint) combinators
+  `manyTillRec`, `many1TillRec`, `sepEndByRec`, and `sepEndBy1Rec`. (#130 by @fsoikin)
+- Added a new operator `<~?>` (alias of `withLazyErrorMessage`), an analog of
+  `<?>`, but allows the error message to be deferred until there is actually an
+  error. Handy when the error message is expensive to construct. (#129 by @fsoikin)
+
+## [v7.1.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v7.1.0) - 2022-01-06
+
+Breaking changes:
+
+New features:
+
+- Added primitive parsers `oneOfCodePoints` and `noneOfCodePoints` - `CodePoint`
+  versions of `oneOf` and `noneOf` respectively. (#127 by @fsoikin)
+
+Bugfixes:
+
+Other improvements:
+- Added `purs-tidy` formatter (#126 by @thomashoneyman)
+
+## [v7.0.1](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v7.0.1) - 2021-11-17
+
+Other improvements:
+
+- Split license file (#125 by @maxdeviant)
+
+## [v7.0.0](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v7.0.0) - 2021-10-06
+
+Breaking changes:
+- `anyChar` no longer always succeeds. It will only succeed on a Basic Multilingual Plane character. The new parser `anyCodePoint` will always succeed. (#119 by @jamesdbrock)
+- Deleted the `StringLike` typeclass. Users must delete all `StringLike` constraints. (#119 by @jamesdbrock)
+- Moved `updatePosString` to the `String` module and don’t export it. (#119 by @jamesdbrock)
+- Changed the definition of `whiteSpace` and `skipSpaces` to `Data.CodePoint.Unicode.isSpace`. (#119 by @jamesdbrock)
+
+New features:
+- Added primitive parsers `anyCodePoint` and `satisfyCodePoint` for parsing `CodePoint`s. (#119 by @jamesdbrock)
+- Added `match` combinator (#119 by @jamesdbrock)
+
+Bugfixes:
+- Ensure Unicode correctness (#119 by @jamesdbrock)
+
+Other improvements:
+- Added benchmark suite (#119 by @jamesdbrock)
+- Split the dev dependencies out into `spago-dev.dhall`.
 
 ## [v6.0.2](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v6.0.2) - 2021-05-09
 
 Bugfixes:
-- Revert combinator implementation changes from #102 (@robertdp, https://github.com/purescript-contrib/purescript-parsing/pull/116)
+- Reverted combinator implementation changes from #102 (@robertdp, https://github.com/purescript-contrib/purescript-parsing/pull/116)
 
 ## [v6.0.1](https://github.com/purescript-contrib/purescript-parsing/releases/tag/v6.0.1) - 2021-04-20
 
